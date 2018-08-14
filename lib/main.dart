@@ -35,11 +35,13 @@ class RandomWords extends StatefulWidget {
 
 class RandomWordsState extends State<RandomWords> {
   final _suggestions = <WordPair>[]; // collection literals in dart
-  final _biggerFont = const TextStyle(fontSize: 18.0); // constant constructors & named parameter
+  final _save = new Set<WordPair>();
+  final _biggerFont = const TextStyle(
+      fontSize: 18.0); // constant constructors & named parameter
   Widget _buildSuggestions() {
     return new ListView.builder(
       padding: const EdgeInsets.all(16.0),
-       // 对于每个建议的单词对都会调用一次itemBuilder，然后将单词对添加到ListTile行中
+      // 对于每个建议的单词对都会调用一次itemBuilder，然后将单词对添加到ListTile行中
       // 在偶数行，该函数会为单词对添加一个ListTile row.
       // 在奇数行，该行书湖添加一个分割线widget，来分隔相邻的词对。
       // 注意，在小屏幕上，分割线看起来可能比较吃力。
@@ -60,11 +62,25 @@ class RandomWordsState extends State<RandomWords> {
   }
 
   Widget _buildRow(WordPair pair) {
+    final alreadySaved = _save.contains(pair);
     return new ListTile(
       title: new Text(
         pair.asPascalCase,
         style: _biggerFont,
       ),
+      trailing: new Icon(
+        alreadySaved ? Icons.favorite : Icons.favorite_border,
+        color: alreadySaved ? Colors.red : null,
+      ),
+      onTap: () {
+        setState(() {
+          if (alreadySaved) {
+            _save.remove(pair);
+          } else {
+            _save.add(pair);
+          }
+        });
+      },
     );
   }
 
